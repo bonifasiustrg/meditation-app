@@ -1,6 +1,5 @@
 package com.bonifasiustrg.meditationapp.ui
 
-import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,25 +7,21 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.material.darkColors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Alignment.Companion.TopStart
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,7 +38,7 @@ fun HomeScreen() {
     Box(modifier = Modifier
         .fillMaxSize()
         .background(DeepBlue)
-        .padding(16.dp)
+//        .padding(16.dp)
     ) {
         Column {
             GreetingSection()
@@ -69,33 +64,118 @@ fun HomeScreen() {
                 ),
                 Feature(
                     title = "Night island",
-                    R.drawable.ic_headphone,
+                    R.drawable.ic_moon,
                     OrangeYellow1,
                     OrangeYellow2,
                     OrangeYellow3
                 ),
                 Feature(
                     title = "Calming sounds",
-                    R.drawable.ic_headphone,
+                    R.drawable.ic_music,
                     Beige1,
                     Beige2,
                     Beige3
                 ),
-                Feature("Tes1", R.drawable.ic_profile, Color.White, BlueViolet2, DarkerButtonBlue),
-                Feature("Tes2", R.drawable.ic_headphone, Color.White, BlueViolet2, DarkerButtonBlue),
-                Feature("Tes3", R.drawable.ic_moon, Color.White, BlueViolet2, DarkerButtonBlue),
+                Feature("Coming Soon", R.drawable.ic_profile, Color.White, BlueViolet2, DarkerButtonBlue),
+                Feature("Coming Soon", R.drawable.ic_headphone, Color.White, BlueViolet2, DarkerButtonBlue),
+                Feature("Coming Soon", R.drawable.ic_moon, Color.White, BlueViolet2, DarkerButtonBlue),
             )
 
             FeaturedSection(feature = features)
+
         }
+        val items = listOf<BottomMenuContent>(
+            BottomMenuContent("Home", R.drawable.ic_home),
+            BottomMenuContent("Meditate", R.drawable.ic_bubble),
+            BottomMenuContent("Sleep", R.drawable.ic_moon),
+            BottomMenuContent("Music", R.drawable.ic_music),
+            BottomMenuContent("Profile", R.drawable.ic_profile)
+        )
+
+        BottomNavMenu(items = items,
+        modifier = Modifier.align(BottomCenter).fillMaxWidth())
     }
 
 }
 
 
 @Composable
+fun BottomNavMenu(
+    items: List<BottomMenuContent>,
+    modifier: Modifier = Modifier,
+    activeHighlightColor: Color = ButtonBlue,
+    activeTextColor: Color = Color.White,
+    inactiveTextColor: Color = AquaBlue,
+    initialSelectedItemIndex: Int = 0
+) {
+    var selectedItemIndex by remember {
+        mutableStateOf(initialSelectedItemIndex)
+    }
+
+    Row(modifier = modifier
+        .fillMaxWidth()
+        .background(DeepBlue)
+        .padding(horizontal=15.dp, vertical=8.dp),
+        horizontalArrangement = Arrangement.SpaceAround,
+        verticalAlignment = Alignment.CenterVertically,
+
+        ) {
+        items.forEachIndexed { index, item ->  
+            BottomNavMenuItem(
+                item = item,
+                isSelected = index == selectedItemIndex,
+                activeHighlightColor = activeHighlightColor,
+                activeTextColor = activeTextColor,
+                inactiveTextColor = inactiveTextColor
+            ) {
+                selectedItemIndex = index
+            }
+        }
+    }
+}
+
+@Composable
+fun BottomNavMenuItem(
+    item: BottomMenuContent,
+    isSelected: Boolean = false,
+    activeHighlightColor: Color = ButtonBlue,
+    activeTextColor: Color = Color.White,
+    inactiveTextColor: Color = AquaBlue,
+    onItemClick: () -> Unit
+) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.clickable {
+            onItemClick()
+        }
+        ) {
+        Box(contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .clip(RoundedCornerShape(10.dp))
+                .background(
+                    if (isSelected) activeHighlightColor else Color.Transparent
+                )
+                .padding(10.dp)
+        ){
+            Icon(
+                painter = painterResource(id = item.iconId),
+                contentDescription = item.title,
+                tint = if (isSelected) activeTextColor else inactiveTextColor,
+                modifier = Modifier.size(20.dp)
+
+            )
+        }
+
+        Text(text = item.title,
+            color = if (isSelected) activeTextColor else inactiveTextColor
+        )
+
+    }
+}
+
+@Composable
 fun GreetingSection() {
-    Row(Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.SpaceBetween) {
+    Row(Modifier.fillMaxWidth().padding(15.dp),horizontalArrangement = Arrangement.SpaceBetween) {
         Column(){
             Text(text = "Good Morning, Bonifasius", style = Typography.h1)
             Text(text = "Wish you have a good day!", style = Typography.body1)
@@ -117,7 +197,7 @@ fun ChipSection(
         mutableStateOf(0)
     }
 
-    LazyRow() {
+    LazyRow(modifier = Modifier.padding(horizontal = 15.dp)) {
         items(chipList.size) {idx ->
             Box(modifier = Modifier
                 .padding(top = 15.dp, bottom = 15.dp, end = 15.dp)
@@ -142,6 +222,7 @@ fun ChipSection(
 fun CurrentMeditation() {
     Row(
         Modifier
+            .padding(horizontal = 15.dp)
             .clip(RoundedCornerShape(16.dp))
             .background(LightRed)
             .padding(horizontal = 15.dp, vertical = 20.dp)
@@ -185,6 +266,7 @@ fun FeaturedSection(feature: List<Feature>) {
                 FeatureItem(feature = feature[it])
             }
         }
+
 
     }
 }
