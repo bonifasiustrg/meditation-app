@@ -10,6 +10,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.bonifasiustrg.meditationapp.ui.HomeScreen
 import com.bonifasiustrg.meditationapp.ui.theme.MeditationAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -18,12 +19,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             MeditationAppTheme {
                 // A surface container using the 'background' color from the theme
-                Surface(
+                /*Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
 
-                }
+                }*/
+                HomeScreen()
             }
         }
     }
